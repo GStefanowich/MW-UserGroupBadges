@@ -1,0 +1,29 @@
+{
+	"manifest_version": 1,
+	"type": "other",
+
+	"name": "UserGroupBadges",
+	"author": "[https://theelm.net TheElm]",
+	"description": "Adds badges for UserGroups that a User is in",
+
+	"url": "https://theelm.net/MW-UserGroupBadges",
+	"version": "1.0.0",
+	"license-name": "MIT",
+
+	"Hooks": {
+		"HtmlPageLinkRendererBegin": "main",
+		"BeforePageDisplay": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "UserGroupBadges\\Hooks",
+			"services": [
+				"RepoGroup",
+				"ContentLanguage"
+			]
+		}
+	},
+	"AutoloadNamespaces": {
+		"UserGroupBadges\\": "includes/"
+	}
+}
