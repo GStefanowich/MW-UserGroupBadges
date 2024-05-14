@@ -20,7 +20,7 @@ MediaWiki uses the following pages to declare details about a User Group:
 - `MediaWiki:Grouppage:${group}` Name of the group page
 
 To give a Group a badge, simply define the badge on the following page:
-- `MediaWiki:Group:${group}-badge` A resource that should be used as the badge
+- `MediaWiki:Group-${group}-badge` A resource that should be used as the badge
 
 A group badge can be
 - A data tag `data:...` (Eg `data:image/svg+xml;charset=utf-8,...`)
