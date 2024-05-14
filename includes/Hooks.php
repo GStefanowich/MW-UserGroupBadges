@@ -38,7 +38,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 */
 	public function onHtmlPageLinkRendererBegin( $renderer, $target, &$text, &$attr, &$query, &$ret ) {
 		// Check that we're linking a User
-		if ( !$target -> inNamespace( NS_USER ) ) {
+		if ( !$target -> inNamespace( NS_USER ) || $target -> hasFragment() ) {
 			return;
 		}
 
@@ -46,7 +46,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 		$user = User::newFromName($target -> getText());
 
 		// If the user doesn't exist, skip
-		if ( $user -> getId() === 0 ) {
+		if ( !$user || $user -> getId() === 0 ) {
 			return;
 		}
 
