@@ -17,7 +17,7 @@ MediaWiki uses the following pages to declare details about a User Group:
 
 - `MediaWiki:Group-${group}`: Name of the group
 - `MediaWiki:Group-${group}-member`: Name of a member of the group
-- `MediaWiki:Grouppage:${group}` Name of the group page
+- `MediaWiki:Grouppage-${group}` Name of the group page
 
 To give a Group a badge, simply define the badge on the following page:
 - `MediaWiki:Group-${group}-badge` A resource that should be used as the badge
