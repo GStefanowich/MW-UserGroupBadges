@@ -22,6 +22,9 @@
 			]
 		}
 	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"Hooks": {
 		"HtmlPageLinkRendererBegin": "main",
 		"BeforePageDisplay": "main"
@@ -32,8 +35,7 @@
 			"services": [
 				"UserFactory",
 				"UserGroupManager",
-				"RepoGroup",
-				"ContentLanguage"
+				"ExtUserGroupBadges"
 			]
 		}
 	},
