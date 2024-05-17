@@ -4,6 +4,7 @@ namespace UserGroupBadges;
 
 use Html;
 use User;
+use Title;
 use Config;
 use Message;
 use HtmlArmor;
@@ -131,13 +132,14 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 
 			// Check that something is set for the translation
 			if ( $i18n -> exists() ) {
-				$path = $this -> substrFilepath($i18n);
+			    $plain = $i18n -> plain();
 				$url  = null;
 
-				if ( str_starts_with( $path, 'data:' ) ) {
+				if ( str_starts_with( $plain, 'data:' ) ) {
 					// Allow data paths
-					$url = $path;
+					$url = $plain;
 				} else {
+                    $path = $this -> fileNameFromTitle($plain);
 					$image = $this -> files -> findFile($path);
 
 					// If the file doesn't exist (Only check if it's a LocalFile)
@@ -161,18 +163,11 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	/**
 	 * Strip away the "File:" namespace from an Interface Message
 	 *
-	 * @param  Message $i18n A MessageKey referencing a File location
+	 * @param  string $plain A string referencing a File location
 	 * @return Returns the name of a File
 	 */
-	private function substrFilepath( Message $i18n ): string {
-		$path = $i18n -> plain();
-		$ns   = $this -> lang -> getFormattedNsText(NS_FILE);
-
-		// If the given message starts with the "File:" (Translated) namespace, strip it
-		if ( str_starts_with($path, $ns . ':' ) ) {
-			return substr($path, strlen($ns . ':'));
-		}
-
-		return $path;
+	private function fileNameFromTitle(string $plain ): string {
+		$title = Title::newFromText($plain, NS_FILE);
+		return $title ? $title -> getText() : $plain;
 	}
 }
