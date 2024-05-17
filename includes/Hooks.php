@@ -1,6 +1,6 @@
 <?php
 
-namespace UserGroupBadges;
+namespace MediaWiki\Extension\UserGroupBadges;
 
 use Html;
 use User;

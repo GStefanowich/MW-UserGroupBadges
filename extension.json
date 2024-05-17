@@ -16,7 +16,7 @@
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "UserGroupBadges\\Hooks",
+			"class": "MediaWiki\\Extension\\UserGroupBadges\\Hooks",
 			"services": [
 				"UserFactory",
 				"UserGroupManager",
@@ -26,6 +26,6 @@
 		}
 	},
 	"AutoloadNamespaces": {
-		"UserGroupBadges\\": "includes/"
+		"MediaWiki\\Extension\\UserGroupBadges\\": "includes/"
 	}
 }
