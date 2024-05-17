@@ -10,11 +10,11 @@ class GroupBadgesModule extends FileModule {
         $styles = parent::getStyles( $context );
 
         /** @var UserGroupBadges */
-        $badges = MediaWikiServices::getInstance()->getService( UserGroupBadges::SERVICE_NAME );
+        $badges = MediaWikiServices::getInstance() -> getService( UserGroupBadges::SERVICE_NAME );
 
 		// Loop through our groups
         $badgeCss = [];
-		foreach ( $badges->getGroups() as $group => $data ) {
+		foreach ( $badges -> getGroups() as $group => $data ) {
 			$badgeCss[] = 'i.group-badge.role-' . $group . '{ background-image: url("' . $data['url'] . '") }';
 		}
 

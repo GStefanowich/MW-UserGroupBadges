@@ -24,23 +24,23 @@ class UserGroupBadges {
 	}
 
     public function getGroups(): array {
-        if ( $this->cache !== null ) {
-            return $this->cache;
+        if ( $this -> cache !== null ) {
+            return $this -> cache;
         }
 
-		$this->cache = [];
+		$this -> cache = [];
 
 		foreach( $this -> groups -> listAllGroups() as $group ) {
 			$url = $this -> getBadgeUrl( $group );
 			if ( $url !== null ) {
-				$this->cache[$group] = [
+				$this -> cache[$group] = [
 					'title' => wfMessage( 'group-' . $group ) -> inContentLanguage() -> plain(),
 					'url'   => $url
 				];
 			}
 		}
 
-		return $this->cache;
+		return $this -> cache;
 	}
 
     private function getBadgeUrl( string $group ): ?string {

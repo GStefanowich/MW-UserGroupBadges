@@ -9,8 +9,8 @@ return [
         MediaWikiServices $services
     ): UserGroupBadges {
         return new UserGroupBadges(
-            $services->getUserGroupManager(),
-            $services->getRepoGroup()
+            $services -> getUserGroupManager(),
+            $services -> getRepoGroup()
         );
     },
 ];

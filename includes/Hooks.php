@@ -73,7 +73,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 		}
 
 		$updated = false;
-		$groups = $this->badges->getGroups();
+		$groups = $this -> badges -> getGroups();
 
 		// Iterate each group that the user is a member of, check if there is a badge defined for that group
 		foreach ( $this -> groups -> getUserGroups($user) as $group ) {
@@ -107,8 +107,8 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 * @param Skin       $skin The current wiki skin
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
-		$out->addModuleStyles( [
-			'ext.usergroupbadges',
-		] );
+		$out -> addModuleStyles([
+			'ext.usergroupbadges.styles',
+		]);
 	}
 }

@@ -24,7 +24,7 @@ To give a Group a badge, simply define the badge on the following page:
 
 A group badge can be
 - A data tag `data:...` (Eg `data:image/svg+xml;charset=utf-8,...`)
-- A wiki File (With or without the `File:` namespace)
+- A wiki File (With or without the `File:`/`Media:`/`Image:` namespace)
 
 # Notes
 

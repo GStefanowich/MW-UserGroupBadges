@@ -15,7 +15,7 @@
 		"remoteExtPath": "UserGroupBadges/modules"
 	},
 	"ResourceModules": {
-		"ext.usergroupbadges": {
+		"ext.usergroupbadges.styles": {
 			"class": "MediaWiki\\Extension\\UserGroupBadges\\GroupBadgesModule",
 			"styles": [
 				"ext.usergroupbadges.css"
