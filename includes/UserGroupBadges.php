@@ -34,7 +34,7 @@ class UserGroupBadges {
 			$url = $this -> getBadgeUrl( $group );
 			if ( $url !== null ) {
 				$this->cache[$group] = [
-					'title' => wfMessage( 'group-' . $group ) -> plain(),
+					'title' => wfMessage( 'group-' . $group ) -> inContentLanguage() -> plain(),
 					'url'   => $url
 				];
 			}
@@ -44,7 +44,7 @@ class UserGroupBadges {
 	}
 
     private function getBadgeUrl( string $group ): ?string {
-        $i18n = wfMessage( 'group-' . $group . '-badge' );
+        $i18n = wfMessage( 'group-' . $group . '-badge' ) -> inContentLanguage();
 
         // Check that something is set for the translation
         if ( $i18n -> exists() ) {
