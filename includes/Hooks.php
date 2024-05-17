@@ -105,38 +105,15 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	}
 
 	/**
-	 * Generate page CSS for displaying badges in links to User pages
+	 * Include CSS for displaying badges in links to User pages on every page
 	 *
 	 * @param OutputPage $out  The current page
 	 * @param Skin       $skin The current wiki skin
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
-		$inline = null;
-		$groups = $this -> cache ??= $this -> getGroups();
-
-		// Loop through our groups
-		foreach($groups as $group => $data) {
-			// Set the badge basic styles
-			if ( !$inline ) {
-				$inline = 'i.group-badge {' . join(';', [
-					'display: inline-block',
-					'width: 16px',
-					'height: 16px',
-					'margin-right: 3px',
-					'margin-top: -2px',
-					'vertical-align: middle',
-					'background-size: 16px 16px'
-				]) . '}';
-			}
-
-			// Append the badge styling
-			$inline .= 'i.group-badge.role-' . $group . '{ background-image: url("' . $data['url'] . '") }';
-		}
-
-		// If we generated our inline formatting, append it to the page
-		if ( $inline ) {
-			$out -> addInlineStyle($inline);
-		}
+		$out->addModuleStyles( [
+			'ext.usergroupbadges',
+		] );
 	}
 
 	private function getGroups(): array {
