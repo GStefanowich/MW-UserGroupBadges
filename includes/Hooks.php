@@ -12,6 +12,7 @@ use RepoGroup;
 use Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserGroupManager;
 use MediaWiki\Hook\BeforePageDisplayHook; // Moved in newer versions to 'MediaWiki\Output\Hook\BeforePageDisplayHook'
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
@@ -20,15 +21,22 @@ use MediaWiki\ResourceLoader\Context;
 
 class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	private UserFactory $users;
+	private UserGroupManager $groups;
 	private RepoGroup $files;
 	private Language $lang;
-	private ?Array $groups; // Simple cache of groups so we don't run file checks a bunch
+	private ?Array $cache; // Simple cache of groups so we don't run file checks a bunch
 
-	public function __construct( UserFactory $users, RepoGroup $files, Language $lang ) {
+	public function __construct(
+	    UserFactory $users,
+	    UserGroupManager $groups,
+	    RepoGroup $files,
+	    Language $lang
+	) {
 		$this -> users = $users;
+		$this -> groups = $groups;
 		$this -> files = $files;
 		$this -> lang = $lang;
-		$this -> groups = null; // Don't init groups in the constructor, wfMessages aren't allowed yet
+		$this -> cache = null; // Don't init groups in the constructor, wfMessages aren't allowed yet
 	}
 
 	/**
@@ -46,8 +54,16 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 			return;
 		}
 
+        if ( $target instanceof Title ) {
+            if ( $target -> isSubpage() )
+                return;
+            $text = $target -> getRootText();
+        } else {
+            $text = $target -> getText();
+        }
+
 		// Get the user that is being linked to
-		$user = $this -> users -> newFromName($target -> getText());
+		$user = $this -> users -> newFromName( $text );
 
 		// If the user doesn't exist, skip
 		if ( !$user || $user -> getId() === 0 ) {
@@ -56,15 +72,15 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 
 		// Get the plaintext inner content
 		$plain = $text;
-		if ($text instanceof HtmlArmor) {
+		if ( $text instanceof HtmlArmor ) {
 			$plain = HtmlArmor::getHtml($text);
 		}
 
 		$updated = false;
-		$groups = $this -> groups ??= $this -> getGroups();
+		$groups = $this -> cache ??= $this -> getGroups();
 
 		// Iterate each group that the user is a member of, check if there is a badge defined for that group
-		foreach ($user -> getGroups() as $group) {
+		foreach ( $this -> groups -> getUserGroups($user) as $group ) {
 			$data = $groups[$group] ?? null;
 
 			// Check if the [MediaWiki:group-[key]-badge] message exists
@@ -83,8 +99,8 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 			}
 		}
 
-		if ($updated) {
-			$text = new HtmlArmor($plain);
+		if ( $updated ) {
+			$text = new HtmlArmor( $plain );
 		}
 	}
 
@@ -96,7 +112,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
 		$inline = null;
-		$groups = $this -> groups ??= $this -> getGroups();
+		$groups = $this -> cache ??= $this -> getGroups();
 
 		// Loop through our groups
 		foreach($groups as $group => $data) {
@@ -124,34 +140,15 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	}
 
 	private function getGroups(): array {
-		global $wgGroupPermissions; // Get the group names
-
 		$groups = [];
-		foreach(array_keys($wgGroupPermissions) as $group) {
-			$i18n = wfMessage('group-' . $group . '-badge');
+
+		foreach( $this -> groups -> listAllGroups() as $group ) {
+			$url = $this -> getGroupBadgeUrl( $group );
 
 			// Check that something is set for the translation
-			if ( $i18n -> exists() ) {
-			    $plain = $i18n -> plain();
-				$url  = null;
-
-				if ( str_starts_with( $plain, 'data:' ) ) {
-					// Allow data paths
-					$url = $plain;
-				} else {
-                    $path = $this -> fileNameFromTitle($plain);
-					$image = $this -> files -> findFile($path);
-
-					// If the file doesn't exist (Only check if it's a LocalFile)
-					if ( !$image || ($image instanceof LocalFile && !$image -> exists()) ) {
-						continue;
-					}
-
-					$url = $image -> getFullUrl();
-				}
-
+			if ( $url !== null ) {
 				$groups[$group] = [
-					'title' => wfMessage('group-' . $group) -> plain(),
+					'title' => wfMessage( 'group-' . $group ) -> plain(),
 					'url'   => $url
 				];
 			}
@@ -159,6 +156,30 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 
 		return $groups;
 	}
+
+    private function getGroupBadgeUrl( string $group ): ?string {
+        $i18n = wfMessage( 'group-' . $group . '-badge' );
+
+        // Check that something is set for the translation
+        if ( $i18n -> exists() ) {
+            $plain = $i18n -> plain();
+
+            if ( str_starts_with( $plain, 'data:' ) ) {
+                // Allow data paths
+                return $plain;
+            }
+
+            $path = $this -> fileNameFromTitle( $plain );
+            $image = $this -> files -> findFile( $path );
+
+            // If the file doesn't exist (Only check if it's a LocalFile)
+            if ( $image && ( !$image instanceof LocalFile || $image -> exists() ) ) {
+                return $image -> getFullUrl();
+            }
+        }
+
+        return null;
+    }
 
 	/**
 	 * Strip away the "File:" namespace from an Interface Message

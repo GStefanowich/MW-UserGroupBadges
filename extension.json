@@ -19,6 +19,7 @@
 			"class": "UserGroupBadges\\Hooks",
 			"services": [
 				"UserFactory",
+				"UserGroupManager",
 				"RepoGroup",
 				"ContentLanguage"
 			]
