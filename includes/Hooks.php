@@ -10,6 +10,7 @@ use HtmlArmor;
 use RepoGroup;
 use Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserFactory;
 use MediaWiki\Hook\BeforePageDisplayHook; // Moved in newer versions to 'MediaWiki\Output\Hook\BeforePageDisplayHook'
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
@@ -17,12 +18,14 @@ use MediaWiki\Linker\Hook\HtmlPageLinkRendererBeginHook;
 use MediaWiki\ResourceLoader\Context;
 
 class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
-	private $repo;
-	private $lang;
-	private $groups; // Simple cache of groups so we don't run file checks a bunch
+	private UserFactory $users;
+	private RepoGroup $files;
+	private Language $lang;
+	private ?Array $groups; // Simple cache of groups so we don't run file checks a bunch
 
-	public function __construct( RepoGroup $repo, Language $lang ) {
-		$this -> repo = $repo;
+	public function __construct( UserFactory $users, RepoGroup $files, Language $lang ) {
+		$this -> users = $users;
+		$this -> files = $files;
 		$this -> lang = $lang;
 		$this -> groups = null; // Don't init groups in the constructor, wfMessages aren't allowed yet
 	}
@@ -38,12 +41,12 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 */
 	public function onHtmlPageLinkRendererBegin( $renderer, $target, &$text, &$attr, &$query, &$ret ) {
 		// Check that we're linking a User
-		if ( !$target -> inNamespace( NS_USER ) || $target -> hasFragment() ) {
+		if ( !$target -> inNamespace( NS_USER ) ) {
 			return;
 		}
 
 		// Get the user that is being linked to
-		$user = User::newFromName($target -> getText());
+		$user = $this -> users -> newFromName($target -> getText());
 
 		// If the user doesn't exist, skip
 		if ( !$user || $user -> getId() === 0 ) {
@@ -135,7 +138,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 					// Allow data paths
 					$url = $path;
 				} else {
-					$image = $this -> repo -> findFile($path);
+					$image = $this -> files -> findFile($path);
 
 					// If the file doesn't exist (Only check if it's a LocalFile)
 					if ( !$image || ($image instanceof LocalFile && !$image -> exists()) ) {
@@ -173,5 +176,3 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 		return $path;
 	}
 }
-
-?>
