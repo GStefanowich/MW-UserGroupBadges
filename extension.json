@@ -10,6 +10,21 @@
 	"version": "1.0.0",
 	"license-name": "MIT",
 
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "UserGroupBadges/modules"
+	},
+	"ResourceModules": {
+		"ext.usergroupbadges": {
+			"class": "MediaWiki\\Extension\\UserGroupBadges\\GroupBadgesModule",
+			"styles": [
+				"ext.usergroupbadges.css"
+			]
+		}
+	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"Hooks": {
 		"HtmlPageLinkRendererBegin": "main",
 		"BeforePageDisplay": "main"
@@ -20,8 +35,7 @@
 			"services": [
 				"UserFactory",
 				"UserGroupManager",
-				"RepoGroup",
-				"ContentLanguage"
+				"ExtUserGroupBadges"
 			]
 		}
 	},

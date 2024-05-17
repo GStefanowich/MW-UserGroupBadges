@@ -18,25 +18,21 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Linker\Hook\HtmlPageLinkRendererBeginHook;
 use MediaWiki\ResourceLoader\Context;
+use OutputPage;
 
 class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	private UserFactory $users;
 	private UserGroupManager $groups;
-	private RepoGroup $files;
-	private Language $lang;
-	private ?Array $cache; // Simple cache of groups so we don't run file checks a bunch
+	private UserGroupBadges $badges;
 
 	public function __construct(
 	    UserFactory $users,
 	    UserGroupManager $groups,
-	    RepoGroup $files,
-	    Language $lang
+		UserGroupBadges $badges
 	) {
 		$this -> users = $users;
 		$this -> groups = $groups;
-		$this -> files = $files;
-		$this -> lang = $lang;
-		$this -> cache = null; // Don't init groups in the constructor, wfMessages aren't allowed yet
+		$this -> badges = $badges;
 	}
 
 	/**
@@ -77,7 +73,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 		}
 
 		$updated = false;
-		$groups = $this -> cache ??= $this -> getGroups();
+		$groups = $this->badges->getGroups();
 
 		// Iterate each group that the user is a member of, check if there is a badge defined for that group
 		foreach ( $this -> groups -> getUserGroups($user) as $group ) {
@@ -111,84 +107,8 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 * @param Skin       $skin The current wiki skin
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
-		$inline = null;
-		$groups = $this -> cache ??= $this -> getGroups();
-
-		// Loop through our groups
-		foreach($groups as $group => $data) {
-			// Set the badge basic styles
-			if ( !$inline ) {
-				$inline = 'i.group-badge {' . join(';', [
-					'display: inline-block',
-					'width: 16px',
-					'height: 16px',
-					'margin-right: 3px',
-					'margin-top: -2px',
-					'vertical-align: middle',
-					'background-size: 16px 16px'
-				]) . '}';
-			}
-
-			// Append the badge styling
-			$inline .= 'i.group-badge.role-' . $group . '{ background-image: url("' . $data['url'] . '") }';
-		}
-
-		// If we generated our inline formatting, append it to the page
-		if ( $inline ) {
-			$out -> addInlineStyle($inline);
-		}
-	}
-
-	private function getGroups(): array {
-		$groups = [];
-
-		foreach( $this -> groups -> listAllGroups() as $group ) {
-			$url = $this -> getGroupBadgeUrl( $group );
-
-			// Check that something is set for the translation
-			if ( $url !== null ) {
-				$groups[$group] = [
-					'title' => wfMessage( 'group-' . $group ) -> plain(),
-					'url'   => $url
-				];
-			}
-		}
-
-		return $groups;
-	}
-
-    private function getGroupBadgeUrl( string $group ): ?string {
-        $i18n = wfMessage( 'group-' . $group . '-badge' );
-
-        // Check that something is set for the translation
-        if ( $i18n -> exists() ) {
-            $plain = $i18n -> plain();
-
-            if ( str_starts_with( $plain, 'data:' ) ) {
-                // Allow data paths
-                return $plain;
-            }
-
-            $path = $this -> fileNameFromTitle( $plain );
-            $image = $this -> files -> findFile( $path );
-
-            // If the file doesn't exist (Only check if it's a LocalFile)
-            if ( $image && ( !$image instanceof LocalFile || $image -> exists() ) ) {
-                return $image -> getFullUrl();
-            }
-        }
-
-        return null;
-    }
-
-	/**
-	 * Strip away the "File:" namespace from an Interface Message
-	 *
-	 * @param  string $plain A string referencing a File location
-	 * @return Returns the name of a File
-	 */
-	private function fileNameFromTitle(string $plain ): string {
-		$title = Title::newFromText($plain, NS_FILE);
-		return $title ? $title -> getText() : $plain;
+		$out->addModuleStyles( [
+			'ext.usergroupbadges',
+		] );
 	}
 }

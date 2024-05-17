@@ -1,0 +1,9 @@
+i.group-badge {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+    margin-top: -2px;
+    vertical-align: middle;
+    background-size: 16px 16px;
+}
