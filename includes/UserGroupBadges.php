@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\UserGroupBadges;
 
 use Title;
+use HtmlArmor;
 use RepoGroup;
 use LocalFile;
 use MediaWiki\User\UserGroupManager;
@@ -50,9 +51,9 @@ class UserGroupBadges {
         if ( $i18n -> exists() ) {
             $plain = $i18n -> plain();
 
-            if ( str_starts_with( $plain, 'data:' ) ) {
-                // Allow data paths
-                return $plain;
+            // Allow data paths
+            if ( $data = Html::match($plain) ) {
+                return Html::encodeDataSource( $data );
             }
 
             $path = $this -> fileNameFromTitle( $plain );
@@ -77,5 +78,4 @@ class UserGroupBadges {
 		$title = Title::newFromText($plain, NS_FILE);
 		return $title ? $title -> getText() : $plain;
 	}
-
 }

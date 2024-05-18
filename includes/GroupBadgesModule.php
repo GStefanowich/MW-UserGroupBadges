@@ -1,4 +1,5 @@
 <?php
+
 namespace MediaWiki\Extension\UserGroupBadges;
 
 use MediaWiki\MediaWikiServices;
