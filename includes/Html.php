@@ -34,10 +34,10 @@ class Html {
      */
     public static function jsEncodeURI( string $uri ): string {
         // Start by decoding the input, if the input is already encoded (As it should be), we don't want to double-encode
-        $decoded = rawurldecode($uri);
+        $decoded = rawurldecode( $uri );
 
         // Url Encode and then replace some escaped back to normal
-        return strtr(rawurlencode($decoded), [
+        return strtr(rawurlencode( $decoded ), [
             '%2D' => '-',
             '%5F' => '_',
             '%2E' => '.',

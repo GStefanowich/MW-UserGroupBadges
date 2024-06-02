@@ -4,10 +4,10 @@
 
 	"name": "UserGroupBadges",
 	"author": "[https://theelm.net TheElm]",
-	"description": "Adds badges for UserGroups that a User is in",
+	"descriptionmsg": "user-group-badges-description",
 
 	"url": "https://theelm.net/MW-UserGroupBadges",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"license-name": "MIT",
 
 	"ResourceFileModulePaths": {
@@ -41,5 +41,10 @@
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\UserGroupBadges\\": "includes/"
+	},
+	"MessagesDirs": {
+		"TranslateTweaks": [
+			"i18n"
+		]
 	}
 }

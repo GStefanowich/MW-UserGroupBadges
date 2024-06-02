@@ -20,7 +20,7 @@ class GroupBadgesModule extends FileModule {
 		}
 
         // Add our generated CSS to the bundle (for all media types).
-		$styles['all'] = ( $styles['all'] ?? '' ) . "\n" . implode( '', $badgeCss );
+		$styles['all'] = ( $styles['all'] ?? '' ) . PHP_EOL . implode( '', $badgeCss );
 
         return $styles;
     }

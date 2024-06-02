@@ -1,6 +1,5 @@
 <?php
 
-use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\UserGroupBadges\UserGroupBadges;
 use MediaWiki\MediaWikiServices;
 

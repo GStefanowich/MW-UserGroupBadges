@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\UserGroupBadges;
 
 use Title;
-use HtmlArmor;
 use RepoGroup;
 use LocalFile;
 use MediaWiki\User\UserGroupManager;
