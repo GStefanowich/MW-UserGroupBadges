@@ -10,6 +10,13 @@
 	"version": "1.0.1",
 	"license-name": "MIT",
 
+	"requires": {
+		"MediaWiki": ">= 1.39.4",
+		"platform": {
+			"php": ">= 8.1"
+		}
+	},
+
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
 		"remoteExtPath": "UserGroupBadges/modules"
