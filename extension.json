@@ -7,7 +7,7 @@
 	"descriptionmsg": "user-group-badges-description",
 
 	"url": "https://theelm.net/MW-UserGroupBadges",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"license-name": "MIT",
 
 	"requires": {
