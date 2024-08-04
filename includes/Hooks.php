@@ -78,7 +78,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 		$groups = $this -> badges -> getGroups();
 
 		// Iterate each group that the user is a member of, check if there is a badge defined for that group
-		foreach ( $this -> groups -> getUserGroups($user) as $group ) {
+		foreach ( $this -> groups -> getUserEffectiveGroups($user) as $group ) {
 			$data = $groups[$group] ?? null;
 
 			// Check if the [MediaWiki:group-[key]-badge] message exists
