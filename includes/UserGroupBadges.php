@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\UserGroupBadges;
 
-use Title;
+use MediaWiki\Title\Title;
 use RepoGroup;
 use LocalFile;
 use MediaWiki\User\UserGroupManager;
@@ -51,16 +51,18 @@ class UserGroupBadges {
             $plain = $i18n -> plain();
 
             // Allow data paths
-            if ( $data = Html::match($plain) ) {
+            if ( $data = Html::match( $plain ) ) {
                 return Html::encodeDataSource( $data );
             }
 
-            $path = $this -> fileNameFromTitle( $plain );
-            $image = $this -> files -> findFile( $path );
+            $path = $this -> fileTitleFromRaw( $plain );
+            if ( $path ) {
+                $image = $this -> files -> findFile( $path );
 
-            // If the file doesn't exist (Only check if it's a LocalFile)
-            if ( $image && ( !$image instanceof LocalFile || $image -> exists() ) ) {
-                return $image -> getFullUrl();
+                // If the file doesn't exist (Only check if it's a LocalFile)
+                if ( $image && ( ( !$image instanceof LocalFile ) || $image -> exists() ) ) {
+                    return $image -> getFullUrl();
+                }
             }
         }
 
@@ -71,10 +73,9 @@ class UserGroupBadges {
 	 * Strip away the "File:" namespace from an Interface Message
 	 *
 	 * @param  string $plain A string referencing a File location
-	 * @return string Returns the name of a File
+	 * @return ?Title Returns the title of a File
 	 */
-	private function fileNameFromTitle(string $plain): string {
-		$title = Title::newFromText($plain, NS_FILE);
-		return $title ? $title -> getText() : $plain;
+	private function fileTitleFromRaw( string $plain ): ?Title {
+		return Title::newFromText($plain, NS_FILE);
 	}
 }
