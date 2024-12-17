@@ -18,50 +18,50 @@ class UserGroupBadges {
 	    UserGroupManager $groups,
 	    RepoGroup $files
 	) {
-		$this -> groups = $groups;
-		$this -> files = $files;
-		$this -> cache = null; // Don't initialise just yet, there's a possibility the request won't need this
+		$this->groups = $groups;
+		$this->files = $files;
+		$this->cache = null; // Don't initialise just yet, there's a possibility the request won't need this
 	}
 
     public function getGroups(): array {
-        if ( $this -> cache !== null ) {
-            return $this -> cache;
+        if ( $this->cache !== null ) {
+            return $this->cache;
         }
 
-		$this -> cache = [];
+		$this->cache = [];
 
-		foreach( $this -> groups -> listAllGroups() as $group ) {
-			$url = $this -> getBadgeUrl( $group );
+		foreach( $this->groups->listAllGroups() as $group ) {
+			$url = $this->getBadgeUrl( $group );
 			if ( $url !== null ) {
-				$this -> cache[$group] = [
-					'title' => wfMessage( 'group-' . $group ) -> inContentLanguage() -> plain(),
+				$this->cache[$group] = [
+					'title' => wfMessage( 'group-' . $group )->inContentLanguage()->plain(),
 					'url'   => $url
 				];
 			}
 		}
 
-		return $this -> cache;
+		return $this->cache;
 	}
 
     private function getBadgeUrl( string $group ): ?string {
-        $i18n = wfMessage( 'group-' . $group . '-badge' ) -> inContentLanguage();
+        $i18n = wfMessage( 'group-' . $group . '-badge' )->inContentLanguage();
 
         // Check that something is set for the translation
-        if ( $i18n -> exists() ) {
-            $plain = $i18n -> plain();
+        if ( $i18n->exists() ) {
+            $plain = $i18n->plain();
 
             // Allow data paths
             if ( $data = Html::match( $plain ) ) {
                 return Html::encodeDataSource( $data );
             }
 
-            $path = $this -> fileTitleFromRaw( $plain );
+            $path = $this->fileTitleFromRaw( $plain );
             if ( $path ) {
-                $image = $this -> files -> findFile( $path );
+                $image = $this->files->findFile( $path );
 
                 // If the file doesn't exist (Only check if it's a LocalFile)
-                if ( $image && ( ( !$image instanceof LocalFile ) || $image -> exists() ) ) {
-                    return $image -> getFullUrl();
+                if ( $image && ( ( !$image instanceof LocalFile ) || $image->exists() ) ) {
+                    return $image->getFullUrl();
                 }
             }
         }

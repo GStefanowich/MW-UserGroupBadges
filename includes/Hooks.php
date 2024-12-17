@@ -24,9 +24,9 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	    UserGroupManager $groups,
 		UserGroupBadges $badges
 	) {
-		$this -> users = $users;
-		$this -> groups = $groups;
-		$this -> badges = $badges;
+		$this->users = $users;
+		$this->groups = $groups;
+		$this->badges = $badges;
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	public function onHtmlPageLinkRendererBegin( $linkRenderer, $target, &$text, &$customAttribs, &$query, &$ret ) {
 		if (
             // Check that we're linking a User
-		    !$target -> inNamespace( NS_USER )
+		    !$target->inNamespace( NS_USER )
 
 		    // Has override text, eg; [[User:TheElm|Override]],
 		    //   prevents some things like edit links having badges, or trying to spoof the user with another users badges [[User:TheElm|Bob]]
@@ -52,19 +52,19 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 
         if ( $target instanceof Title ) {
 
-            if ( /* Links to subpage */ $target -> isSubpage() )
+            if ( /* Links to subpage */ $target->isSubpage() )
                 return;
 
-            $text = $target -> getRootText();
+            $text = $target->getRootText();
         } else {
-            $text = $target -> getText();
+            $text = $target->getText();
         }
 
 		// Get the user that is being linked to
-		$user = $this -> users -> newFromName( $text );
+		$user = $this->users->newFromName( $text );
 
 		// If the user doesn't exist, skip
-		if ( !$user || $user -> getId() === 0 ) {
+		if ( !$user || $user->getId() === 0 ) {
 			return;
 		}
 
@@ -75,10 +75,10 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 		}
 
 		$updated = false;
-		$groups = $this -> badges -> getGroups();
+		$groups = $this->badges->getGroups();
 
 		// Iterate each group that the user is a member of, check if there is a badge defined for that group
-		foreach ( $this -> groups -> getUserEffectiveGroups($user) as $group ) {
+		foreach ( $this->groups->getUserEffectiveGroups($user) as $group ) {
 			$data = $groups[$group] ?? null;
 
 			// Check if the [MediaWiki:group-[key]-badge] message exists
@@ -109,7 +109,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 * @param Skin       $skin The current wiki skin
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
-		$out -> addModuleStyles([
+		$out->addModuleStyles([
 			'ext.usergroupbadges.styles',
 		]);
 	}
@@ -125,7 +125,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
      */
     private static function userLinkHasCustomDisplayText( LinkTarget $link, string|HtmlArmor|null $text, array $attribs ): bool {
         $display = $text instanceof HtmlArmor ? HtmlArmor::getHtml( $text ) : $text;
-        $target  = $link instanceof Title ? $link -> getFullText() : $link -> getText();
+        $target  = $link instanceof Title ? $link->getFullText() : $link->getText();
 
         return $target !== $display && !self::arrayContainsClass( $attribs, 'mw-userlink' );
     }
