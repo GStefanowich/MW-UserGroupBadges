@@ -50,7 +50,7 @@
 		"MediaWiki\\Extension\\UserGroupBadges\\": "includes/"
 	},
 	"MessagesDirs": {
-		"TranslateTweaks": [
+		"UserBadges": [
 			"i18n"
 		]
 	}
