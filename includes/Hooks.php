@@ -2,19 +2,20 @@
 
 namespace MediaWiki\Extension\UserGroupBadges;
 
-use Html;
-use Skin;
-use Title;
-use HtmlArmor;
-use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserGroupManager;
-use MediaWiki\Hook\BeforePageDisplayHook; // Moved in newer versions to 'MediaWiki\Output\Hook\BeforePageDisplayHook'
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\Linker\Hook\HtmlPageLinkRendererBeginHook;
-use OutputPage;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Skin;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserGroupManager;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
-class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
+class Hooks implements
+    \MediaWiki\Linker\Hook\HtmlPageLinkRendererBeginHook,
+    \MediaWiki\Output\Hook\BeforePageDisplayHook
+{
 	private UserFactory $users;
 	private UserGroupManager $groups;
 	private UserGroupBadges $badges;
@@ -38,7 +39,7 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
 	 * @param array            $query    Associative array of link query parameters
 	 * @param string           &$ret     The return value if we decide to return 'false' in the function
 	 */
-	public function onHtmlPageLinkRendererBegin( $linkRenderer, $target, &$text, &$customAttribs, &$query, &$ret ) {
+	public function onHtmlPageLinkRendererBegin( $linkRenderer, $target, &$text, &$customAttribs, &$query, &$ret ): void {
 		if (
             // Check that we're linking a User
 		    !$target->inNamespace( NS_USER )
@@ -138,6 +139,6 @@ class Hooks implements HtmlPageLinkRendererBeginHook, BeforePageDisplayHook {
      * @return bool If the associative array 'class' value contains the $class
      */
 	private static function arrayContainsClass( ?array $needle, string $class ): bool {
-        return $needle !== null && str_contains( $needle['class'] ?? '', $class );
+	    return $needle && in_array($class, $needle['class'] ?? []);
     }
 }
