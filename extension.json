@@ -2,9 +2,9 @@
 	"manifest_version": 2,
 	"type": "other",
 
-	"name": "UserGroupBadges",
+	"name": "UserBadges",
 	"author": "[https://theelm.net TheElm]",
-	"descriptionmsg": "user-group-badges-description",
+	"descriptionmsg": "user-badges-description",
 
 	"url": "https://theelm.net/MW-UserGroupBadges",
 	"version": "1.0.2",

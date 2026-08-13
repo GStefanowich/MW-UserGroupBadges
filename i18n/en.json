@@ -4,5 +4,5 @@
 			"TheElm"
 		]
 	},
-	"user-group-badges-description": "Adds badges for UserGroups that a User is in"
+	"user-badges-description": "Adds badges to User mentions"
 }
