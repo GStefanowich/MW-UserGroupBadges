@@ -10,7 +10,7 @@ class GroupBadgesModule extends FileModule {
     public function getStyles( Context $context ) {
         $styles = parent::getStyles( $context );
 
-        /** @var UserGroupBadges */
+        /** @var $badges UserGroupBadges */
         $badges = MediaWikiServices::getInstance()->getService( UserGroupBadges::SERVICE_NAME );
 
 		// Loop through our groups
