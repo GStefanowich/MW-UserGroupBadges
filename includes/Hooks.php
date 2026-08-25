@@ -142,12 +142,12 @@ class Hooks implements
 	    if ( !$needle ) {
 	        return false;
 	    }
-	    
+
 	    $compare = $needle['class'] ?? null;
-	    
+
 	    return match ( gettype($compare) ) {
 	        'string' => str_contains($compare, $class),
-	        'array' => in_array($class, $needle['class']),
+	        'array' => in_array($class, $compare),
 	        default => false,
 	    };
     }
