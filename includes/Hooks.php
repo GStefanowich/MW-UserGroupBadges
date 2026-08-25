@@ -139,6 +139,16 @@ class Hooks implements
      * @return bool If the associative array 'class' value contains the $class
      */
 	private static function arrayContainsClass( ?array $needle, string $class ): bool {
-	    return $needle && in_array($class, $needle['class'] ?? []);
+	    if ( !$needle ) {
+	        return false;
+	    }
+	    
+	    $compare = $needle['class'] ?? null;
+	    
+	    return match ( gettype($compare) ) {
+	        'string' => str_contains($compare, $class),
+	        'array' => in_array($class, $needle['class']),
+	        default => false,
+	    };
     }
 }
